@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/ulule/limiter/v3"
-	"github.com/ulule/limiter/v3/drivers/store/common"
-	"github.com/ulule/limiter/v3/internal/bytebuffer"
+	"github.com/panii/limiter/v3"
+	"github.com/panii/limiter/v3/drivers/store/common"
+	"github.com/panii/limiter/v3/internal/bytebuffer"
 )
 
 // Store is the in-memory store.

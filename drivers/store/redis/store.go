@@ -11,8 +11,8 @@ import (
 	libredis "github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 
-	"github.com/ulule/limiter/v3"
-	"github.com/ulule/limiter/v3/drivers/store/common"
+	"github.com/panii/limiter/v3"
+	"github.com/panii/limiter/v3/drivers/store/common"
 )
 
 const (

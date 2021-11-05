@@ -1,13 +1,13 @@
 package stdlib
 
 import (
-	"net/http"
-	"strconv"
-	"errors"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
+	"net/http"
+	"strconv"
 
-	"github.com/ulule/limiter/v3"
+	"github.com/panii/limiter/v3"
 )
 
 // Middleware is the middleware for basic http.Handler.

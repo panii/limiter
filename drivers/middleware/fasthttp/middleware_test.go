@@ -11,9 +11,9 @@ import (
 	libfasthttp "github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttputil"
 
-	"github.com/ulule/limiter/v3"
-	"github.com/ulule/limiter/v3/drivers/middleware/fasthttp"
-	"github.com/ulule/limiter/v3/drivers/store/memory"
+	"github.com/panii/limiter/v3"
+	"github.com/panii/limiter/v3/drivers/middleware/fasthttp"
+	"github.com/panii/limiter/v3/drivers/store/memory"
 )
 
 // nolint: gocyclo
