@@ -3,6 +3,9 @@ package stdlib
 import (
 	"net/http"
 	"strconv"
+	"errors"
+	"crypto/md5"
+	"encoding/hex"
 
 	"github.com/ulule/limiter/v3"
 )
@@ -34,7 +37,15 @@ func NewMiddleware(limiter *limiter.Limiter, options ...Option) *Middleware {
 // Handler handles a HTTP request.
 func (middleware *Middleware) Handler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		key := middleware.Limiter.GetIPKey(r)
+		keys, ok := r.URL.Query()["key"]
+		var key string
+		if !ok || len(keys[0]) < 1 {
+			middleware.OnError(w, r, errors.New("empty key"))
+		}
+		hash := md5.Sum([]byte(keys[0]))
+		key = hex.EncodeToString(hash[:])
+
+		//key := middleware.Limiter.GetIPKey(r)
 		if middleware.ExcludedKey != nil && middleware.ExcludedKey(key) {
 			h.ServeHTTP(w, r)
 			return
