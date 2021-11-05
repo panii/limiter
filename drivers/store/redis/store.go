@@ -111,6 +111,24 @@ func (store *Store) Get(ctx context.Context, key string, rate limiter.Rate) (lim
 		expiration = now.Add(time.Duration(ttl) * time.Millisecond)
 	}
 
+	if llimt := ctx.Value(fmt.Sprintf("limit%dInt", rate.Limit)); llimt != nil {
+		rate.Limit = llimt.(int64)
+	}
+
+	// fmt.Println("rate.Limit", rate.Limit)
+	// if llimt := ctx.Value("limit1Int"); llimt != nil {
+	// 	fmt.Println("limit1Int", llimt)
+	// }
+	// if llimt := ctx.Value("limit2Int"); llimt != nil {
+	// 	fmt.Println("limit2Int", llimt)
+	// }
+	// if llimt := ctx.Value("limit3Int"); llimt != nil {
+	// 	fmt.Println("limit3Int", llimt)
+	// }
+	// if llimt := ctx.Value("limit4Int"); llimt != nil {
+	// 	fmt.Println("limit4Int", llimt)
+	// }
+
 	return common.GetContextFromState(now, rate, expiration, count), nil
 }
 

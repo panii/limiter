@@ -12,7 +12,7 @@ func GetContextFromState(now time.Time, rate limiter.Rate, expiration time.Time,
 	remaining := int64(0)
 	reached := true
 
-	if count <= limit {
+	if count <= limit { 
 		remaining = limit - count
 		reached = false
 	}

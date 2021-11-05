@@ -42,7 +42,7 @@ func WithLimitReachedHandler(handler LimitReachedHandler) Option {
 
 // DefaultLimitReachedHandler is the default LimitReachedHandler used by a new Middleware.
 func DefaultLimitReachedHandler(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Limit exceeded", http.StatusTooManyRequests)
+	http.Error(w, "deny", http.StatusTooManyRequests)
 }
 
 // WithExcludedKey will configure the Middleware to ignore key(s) using the given function.

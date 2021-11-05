@@ -44,7 +44,7 @@ func WithLimitReachedHandler(handler LimitReachedHandler) Option {
 
 // DefaultLimitReachedHandler is the default LimitReachedHandler used by a new Middleware.
 func DefaultLimitReachedHandler(c *gin.Context) {
-	c.String(http.StatusTooManyRequests, "Limit exceeded")
+	c.String(http.StatusTooManyRequests, "deny")
 }
 
 // KeyGetter will define the rate limiter key given the gin Context.

@@ -43,7 +43,7 @@ func WithLimitReachedHandler(handler LimitReachedHandler) Option {
 // DefaultLimitReachedHandler is the default LimitReachedHandler used by a new Middleware.
 func DefaultLimitReachedHandler(ctx *fasthttp.RequestCtx) {
 	ctx.SetStatusCode(fasthttp.StatusTooManyRequests)
-	ctx.Response.SetBodyString("Limit exceeded")
+	ctx.Response.SetBodyString("deny")
 }
 
 // KeyGetter will define the rate limiter key given the fasthttp Context.
