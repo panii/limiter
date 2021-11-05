@@ -17,7 +17,8 @@ _Dead simple rate limit middleware for Go._
 Using [Go Modules](https://github.com/golang/go/wiki/Modules)
 
 ```bash
-$ go get github.com/ulule/limiter/v3@v3.8.0
+$ go get github.com/panii/limiter/v3@f9294c4a87a3cd02acd1aa95c2929237913d7faf
+js fetch("http://localhost:9000/rate_check?key=hah1aa1a1aaaa&limit1=2&limit2=3&limit3=50&limit4=60&sign=def9d12ba116308c495d1001bdba237c")
 ```
 
 ## Usage
