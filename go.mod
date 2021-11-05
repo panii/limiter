@@ -1,4 +1,4 @@
-module github.com/ulule/limiter/v3
+module github.com/panii/limiter/v3
 
 go 1.12
 
