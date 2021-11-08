@@ -98,6 +98,10 @@ func NewStoreWithOptions(client Client, options limiter.StoreOptions) (limiter.S
 
 // Get returns the limit for given identifier.
 func (store *Store) Get(ctx context.Context, key string, rate limiter.Rate) (limiter.Context, error) {
+	if rateTemp := ctx.Value("rateTemp"); rateTemp != nil {
+		rate = rateTemp.(limiter.Rate)
+	}
+
 	key = fmt.Sprintf("%s:%s", store.Prefix, key)
 	cmd := store.evalSHA(ctx, store.getLuaIncrSHA, []string{key}, 1, rate.Period.Milliseconds())
 	count, ttl, err := parseCountAndTTL(cmd)
@@ -110,9 +114,11 @@ func (store *Store) Get(ctx context.Context, key string, rate limiter.Rate) (lim
 	if ttl > 0 {
 		expiration = now.Add(time.Duration(ttl) * time.Millisecond)
 	}
+	fmt.Println("ttl", ttl)
+	fmt.Println("rate.Limit", rate.Limit)
 
 	// if llimt := ctx.Value(fmt.Sprintf("limit%dInt", rate.Limit)); llimt != nil {
-		// rate.Limit = llimt.(int64)
+	// rate.Limit = llimt.(int64)
 	// }
 
 	// fmt.Println("rate.Limit", rate.Limit)

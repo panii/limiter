@@ -13,6 +13,7 @@ type Rate struct {
 	Formatted string
 	Period    time.Duration
 	Limit     int64
+	Id        string
 }
 
 // NewRateFromFormatted returns the rate from the formatted version.
