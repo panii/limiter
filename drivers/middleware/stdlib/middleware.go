@@ -4,7 +4,6 @@ import (
 	bigcontext "context"
 	"crypto/md5"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -196,9 +195,9 @@ func (middleware *Middleware) Handler(h http.Handler) http.Handler {
 			return
 		}
 
-		fmt.Println("rateId", rateId)
-		fmt.Println("rateTemp.Limit", rateTemp.Limit)
-		fmt.Println("rateTemp.Period", rateTemp.Period)
+		//fmt.Println("rateId", rateId)
+		//fmt.Println("rateTemp.Limit", rateTemp.Limit)
+		//fmt.Println("rateTemp.Period", rateTemp.Period)
 		ctx = bigcontext.WithValue(ctx, "rateTemp", rateTemp)
 
 		context, err := middleware.Limiter.Get(ctx, key)

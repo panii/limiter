@@ -114,8 +114,8 @@ func (store *Store) Get(ctx context.Context, key string, rate limiter.Rate) (lim
 	if ttl > 0 {
 		expiration = now.Add(time.Duration(ttl) * time.Millisecond)
 	}
-	fmt.Println("ttl", ttl)
-	fmt.Println("rate.Limit", rate.Limit)
+	//fmt.Println("ttl", ttl)
+	//fmt.Println("rate.Limit", rate.Limit)
 
 	// if llimt := ctx.Value(fmt.Sprintf("limit%dInt", rate.Limit)); llimt != nil {
 	// rate.Limit = llimt.(int64)
