@@ -10,6 +10,8 @@ import (
 	"github.com/panii/limiter/v3"
 )
 
+var Secret string
+
 // Middleware is the middleware for basic http.Handler.
 type Middleware struct {
 	Limiter        *limiter.Limiter
@@ -53,7 +55,7 @@ func (middleware *Middleware) Handler(h http.Handler) http.Handler {
 			middleware.OnLimitReached(w, r)
 			return
 		}
-		hash2 := md5.Sum([]byte(keys[0] + "-asdfjlijlxxxlkjbbbgyugiaaaoiuoccchiu...yuiyuifkfcom"))
+		hash2 := md5.Sum([]byte(keys[0] + Secret))
 		sign = hex.EncodeToString(hash2[:])
 
 		if sign != signs[0] {
@@ -66,56 +68,128 @@ func (middleware *Middleware) Handler(h http.Handler) http.Handler {
 			h.ServeHTTP(w, r)
 			return
 		}
+        ctx := r.Context()
+        var err error
+        
+        oldLimit := middleware.Limiter.Rate.Limit
 
-		// Add data to context
-		limit1, ok := query["limit1"] // second limit
-		var limit1Int int64
-		var err error
-		if !ok || len(limit1[0]) < 1 {
-			middleware.OnLimitReached(w, r)
+		// Add limit to context
+        if middleware.Limiter.Rate.Limit == 1 {
+            limit1, ok := query["limitSecond"] // second limit
+            var limit1Int int64
+            if !ok || len(limit1[0]) < 1 {
+                middleware.Limiter.Rate.Limit = 0
+            }
+            limit1Int, err = strconv.ParseInt(limit1[0], 10, 64)
+            if err != nil {
+                limit1Int = 0
+            }
+            middleware.Limiter.Rate.Limit = limit1Int
+            // ctx = bigcontext.WithValue(ctx, "limit1Int", limit1Int)
+        }
+
+        if middleware.Limiter.Rate.Limit == 2 {
+            limit2, ok := query["limitMinute"] // minute limit
+            var limit2Int int64
+            if !ok || len(limit2[0]) < 1 {
+                middleware.Limiter.Rate.Limit = 0
+            }
+            limit2Int, err = strconv.ParseInt(limit2[0], 10, 64)
+            if err != nil {
+                limit2Int = 0
+            }
+            middleware.Limiter.Rate.Limit = limit2Int
+        }
+
+        if middleware.Limiter.Rate.Limit == 3 {
+            limit3, ok := query["limitHour"] // hour limit
+            var limit3Int int64
+            if !ok || len(limit3[0]) < 1 {
+                middleware.Limiter.Rate.Limit = 0
+            }
+            limit3Int, err = strconv.ParseInt(limit3[0], 10, 64)
+            if err != nil {
+                limit3Int = 0
+            }
+            middleware.Limiter.Rate.Limit = limit3Int
+        }
+
+        if middleware.Limiter.Rate.Limit == 4 {
+            limit4, ok := query["limitDay"] // day limit
+            var limit4Int int64
+            if !ok || len(limit4[0]) < 1 {
+                middleware.Limiter.Rate.Limit = 0
+            } else {
+                limit4Int, err = strconv.ParseInt(limit4[0], 10, 64)
+                if err != nil {
+                    limit4Int = 0
+                }
+                middleware.Limiter.Rate.Limit = limit4Int
+            }
+        }
+        
+        // Add time to context
+        if middleware.Limiter.Rate.Limit == 1 {
+            time1, ok := query["periodSecond"] // second
+            var time1Int int64
+            if !ok || len(time1[0]) < 1 {
+                
+            } else {
+                time1Int, err = strconv.ParseInt(time1[0], 10, 64)
+                if err != nil {
+                    time1Int = 0
+                }
+                middleware.Limiter.Rate.Period = middleware.Limiter.Rate.Period * time1Int
+            }
+        }
+
+        if middleware.Limiter.Rate.Limit == 2 {
+            time2, ok := query["periodMinute"] // minute
+            var time2Int int64
+            if !ok || len(time2[0]) < 1 {
+                
+            } else {
+                time2Int, err = strconv.ParseInt(time2[0], 10, 64)
+                if err != nil {
+                    time2Int = 0
+                }
+                middleware.Limiter.Rate.Period = middleware.Limiter.Rate.Period * time2Int
+            }
+        }
+
+        if middleware.Limiter.Rate.Limit == 3 {
+            time3, ok := query["periodHour"] // hour
+            var time3Int int64
+            if !ok || len(time3[0]) < 1 {
+                
+            } else {
+                time3Int, err = strconv.ParseInt(time3[0], 10, 64)
+                if err != nil {
+                    time3Int = 0
+                }
+                middleware.Limiter.Rate.Period = middleware.Limiter.Rate.Period * time3Int
+            }
+        }
+
+        if middleware.Limiter.Rate.Limit == 4 {
+            time4, ok := query["periodDay"] // day
+            var time4Int int64
+            if !ok || len(time4[0]) < 1 {
+                
+            } else {
+                time4Int, err = strconv.ParseInt(time4[0], 10, 64)
+                if err != nil {
+                    time4Int = 0
+                }
+                middleware.Limiter.Rate.Period = middleware.Limiter.Rate.Period * time4Int
+            }
+        }
+        
+        // do not check
+        if middleware.Limiter.Rate.Limit == 0 || middleware.Limiter.Rate.Period == 0 {
+			h.ServeHTTP(w, r)
 			return
 		}
-		limit1Int, err = strconv.ParseInt(limit1[0], 10, 64)
-		if err != nil {
-			limit1Int = 0
-		}
-		ctx := bigcontext.WithValue(r.Context(), "limit1Int", limit1Int)
-
-		limit2, ok := query["limit2"] // minute limit
-		var limit2Int int64
-		if !ok || len(limit2[0]) < 1 {
-			middleware.OnLimitReached(w, r)
-			return
-		}
-		limit2Int, err = strconv.ParseInt(limit2[0], 10, 64)
-		if err != nil {
-			limit2Int = 0
-		}
-		ctx = bigcontext.WithValue(ctx, "limit2Int", limit2Int)
-
-		limit3, ok := query["limit3"] // hour limit
-		var limit3Int int64
-		if !ok || len(limit3[0]) < 1 {
-			middleware.OnLimitReached(w, r)
-			return
-		}
-		limit3Int, err = strconv.ParseInt(limit3[0], 10, 64)
-		if err != nil {
-			limit3Int = 0
-		}
-		ctx = bigcontext.WithValue(ctx, "limit3Int", limit3Int)
-
-		limit4, ok := query["limit4"] // day limit
-		var limit4Int int64
-		if !ok || len(limit4[0]) < 1 {
-			middleware.OnLimitReached(w, r)
-			return
-		}
-		limit4Int, err = strconv.ParseInt(limit4[0], 10, 64)
-		if err != nil {
-			limit4Int = 0
-		}
-		ctx = bigcontext.WithValue(ctx, "limit4Int", limit4Int)
 
 		context, err := middleware.Limiter.Get(ctx, key)
 		if err != nil {
@@ -123,22 +197,22 @@ func (middleware *Middleware) Handler(h http.Handler) http.Handler {
 			return
 		}
 
-		if limit1Int == context.Limit {
-			w.Header().Add("X-RateLimit-Limit1", strconv.FormatInt(context.Limit, 10))
-			w.Header().Add("X-RateLimit-Remaining1", strconv.FormatInt(context.Remaining, 10))
-			w.Header().Add("X-RateLimit-Reset1", strconv.FormatInt(context.Reset, 10))
-		} else if limit2Int == context.Limit {
-			w.Header().Add("X-RateLimit-Limit2", strconv.FormatInt(context.Limit, 10))
-			w.Header().Add("X-RateLimit-Remaining2", strconv.FormatInt(context.Remaining, 10))
-			w.Header().Add("X-RateLimit-Reset2", strconv.FormatInt(context.Reset, 10))
-		} else if limit3Int == context.Limit {
-			w.Header().Add("X-RateLimit-Limit3", strconv.FormatInt(context.Limit, 10))
-			w.Header().Add("X-RateLimit-Remaining3", strconv.FormatInt(context.Remaining, 10))
-			w.Header().Add("X-RateLimit-Reset3", strconv.FormatInt(context.Reset, 10))
-		} else if limit4Int == context.Limit {
-			w.Header().Add("X-RateLimit-Limit4", strconv.FormatInt(context.Limit, 10))
-			w.Header().Add("X-RateLimit-Remaining4", strconv.FormatInt(context.Remaining, 10))
-			w.Header().Add("X-RateLimit-Reset4", strconv.FormatInt(context.Reset, 10))
+		if oldLimit == 1 {
+			w.Header().Add("X-RateLimit-LimitSecond", strconv.FormatInt(context.Limit, 10))
+			w.Header().Add("X-RateLimit-RemainingSecond", strconv.FormatInt(context.Remaining, 10))
+			w.Header().Add("X-RateLimit-ResetSecond", strconv.FormatInt(context.Reset, 10))
+		} else if oldLimit == 2 {
+			w.Header().Add("X-RateLimit-LimitMinute", strconv.FormatInt(context.Limit, 10))
+			w.Header().Add("X-RateLimit-RemainingMinute", strconv.FormatInt(context.Remaining, 10))
+			w.Header().Add("X-RateLimit-ResetMinute", strconv.FormatInt(context.Reset, 10))
+		} else if oldLimit == 3 {
+			w.Header().Add("X-RateLimit-LimitHour", strconv.FormatInt(context.Limit, 10))
+			w.Header().Add("X-RateLimit-RemainingHour", strconv.FormatInt(context.Remaining, 10))
+			w.Header().Add("X-RateLimit-ResetHour", strconv.FormatInt(context.Reset, 10))
+		} else if oldLimit == 4 {
+			w.Header().Add("X-RateLimit-LimitDay", strconv.FormatInt(context.Limit, 10))
+			w.Header().Add("X-RateLimit-RemainingDay", strconv.FormatInt(context.Remaining, 10))
+			w.Header().Add("X-RateLimit-ResetDay", strconv.FormatInt(context.Reset, 10))
 		}
 
 		if context.Reached {
